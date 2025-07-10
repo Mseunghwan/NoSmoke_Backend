@@ -88,7 +88,7 @@ public class UserService {
     }
 
     // 사용자 정보 수정
-    public UserProfileResponseDto updateProfile(Long userId, UserUpdateRequestDto requestDto) {
+    public UserUpdateResponseDto updateProfile(Long userId, UserUpdateRequestDto requestDto) {
 
         // 1. 사용자 조회
         User user = userRepository.findById(userId)
@@ -107,12 +107,11 @@ public class UserService {
         // 4. 수정된 정보 저장 및 리턴
         User updatedUser = userRepository.save(user);
 
-        return new UserProfileResponseDto(
+        return new UserUpdateResponseDto(
                 updatedUser.getId(),
                 updatedUser.getName(),
                 updatedUser.getEmail(),
                 updatedUser.getPoint(),
-                updatedUser.getCreatedAt(),
                 updatedUser.getModifiedAt()
         );
 
@@ -135,6 +134,9 @@ public class UserService {
     // 사용자 존재 여부 확인
     public boolean existsById(Long userId){
         return userRepository.existsById(userId);
+    }
+    public boolean existsByEmail(String email){
+        return userRepository.existsByEmail(email);
     }
 
 }
