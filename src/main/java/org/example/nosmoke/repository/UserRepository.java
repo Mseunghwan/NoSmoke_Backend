@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 // interface로 JPARepository를 상속받는 이유?
-    // 상속받으면 SpringDataJpA가 자동으로 구현체를 만들어 줌,
+    // 상속받으면 SpringDataJpa가 자동으로 구현체를 만들어 줌,
     // 원래는 save, findById 뭐 이런거 만들어야 하는데 그냥 써도 된다는 거
 
 // <User, Long> 타입의 이유

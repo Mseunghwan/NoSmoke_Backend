@@ -1,4 +1,4 @@
-package org.example.nosmoke.dto.smokingInfo;
+package org.example.nosmoke.dto.smokinginfo;
 
 import jakarta.validation.constraints.*;
 import lombok.Getter;
