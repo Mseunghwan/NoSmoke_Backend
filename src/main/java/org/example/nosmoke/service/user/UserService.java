@@ -1,10 +1,7 @@
 package org.example.nosmoke.service.user;
 
 import lombok.RequiredArgsConstructor;
-import org.example.nosmoke.dto.user.UserLoginRequestDto;
-import org.example.nosmoke.dto.user.UserLoginResponseDto;
-import org.example.nosmoke.dto.user.UserSignupRequestDto;
-import org.example.nosmoke.dto.user.UserSignupResponseDto;
+import org.example.nosmoke.dto.user.*;
 import org.example.nosmoke.entity.User;
 import org.example.nosmoke.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -75,14 +72,69 @@ public class UserService {
 
 
     // 사용자 프로필 조회
+    public UserProfileResponseDto getProfile(Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
+        return new UserProfileResponseDto(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getPoint(),
+                user.getCreatedAt(),
+                user.getModifiedAt()
+        );
+
+    }
 
     // 사용자 정보 수정
+    public UserProfileResponseDto updateProfile(Long userId, UserUpdateRequestDto requestDto) {
+
+        // 1. 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        // 2. 입력받은 이메일 중복 검증(다른 사용자가 사용하는 이메일인지 확인)
+        if(!user.getEmail().equals(requestDto.getEmail()) &&
+        userRepository.existsByEmail(requestDto.getEmail())) {
+            throw new IllegalArgumentException("이미 사용중인 이메일입니다.");
+        }
+
+
+        // 3. 사용자 정보 수정(실제로는 User 엔티티에 Update 메서드 추가 필요(
+        // 현재는 새로운 User 객체 생성(나중에 개선해야함!!)
+
+        // 4. 수정된 정보 저장 및 리턴
+        User updatedUser = userRepository.save(user);
+
+        return new UserProfileResponseDto(
+                updatedUser.getId(),
+                updatedUser.getName(),
+                updatedUser.getEmail(),
+                updatedUser.getPoint(),
+                updatedUser.getCreatedAt(),
+                updatedUser.getModifiedAt()
+        );
+
+    }
 
 
     // 포인트 수정
+    @Transactional
+    public void updatePoints(Long userId, int points){
+        // 유저 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
+        // 유저의 포인트 수정
+        user.updatePoint(points);
+        // 저장
+        userRepository.save(user);
+    }
 
     // 사용자 존재 여부 확인
+    public boolean existsById(Long userId){
+        return userRepository.existsById(userId);
+    }
 
 }
