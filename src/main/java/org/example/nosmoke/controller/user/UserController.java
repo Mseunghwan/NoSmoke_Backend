@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.nosmoke.dto.ApiResponse;
 import org.example.nosmoke.dto.user.*;
-import org.example.nosmoke.repository.UserRepository;
 import org.example.nosmoke.service.user.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

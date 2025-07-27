@@ -69,8 +69,6 @@ public class UserService {
 
     }
 
-
-
     // 사용자 프로필 조회
     public UserProfileResponseDto getProfile(Long userId){
         User user = userRepository.findById(userId)
