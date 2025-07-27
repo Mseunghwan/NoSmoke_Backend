@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.example.nosmoke.dto.user.*;
 import org.example.nosmoke.entity.User;
 import org.example.nosmoke.repository.UserRepository;
+import org.example.nosmoke.util.JwtTokenProvider;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     // 회원가입
     @Transactional
@@ -24,10 +28,11 @@ public class UserService {
         }
 
         // 2. Dto를 Entity로 변환
+        String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
         User user = new User(
                 requestDto.getName(),
                 requestDto.getEmail(),
-                requestDto.getPassword(), // 암호화 이후 시행하기에 우선은 getPassword로만
+                encodedPassword, // 암호화된 비밀번호를 저장
                 0 // 초기 포인트
         );
 
@@ -50,13 +55,13 @@ public class UserService {
         User user = userRepository.findByEmail(requestDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
-        // 2. 비밀번호 검증
-        if(!user.getPassword().equals(requestDto.getPassword())) {
+        // 2. 비밀번호 검증 - 암호화된 비밀번호를 비교합니다
+        if(!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 틀렸습니다.");
         }
 
         // 3. JWT 토큰 생성(아직 JWT 구현 안했으므로 temp_token으로 임시처리)
-        String token = "temp_token_" + user.getId();
+        String token = jwtTokenProvider.createToken(user.getId().toString(), user.getEmail());
 
         // 4. ResponseDto 생성
         return new UserLoginResponseDto(
@@ -99,8 +104,7 @@ public class UserService {
         }
 
 
-        // 3. 사용자 정보 수정(실제로는 User 엔티티에 Update 메서드 추가 필요(
-        // 현재는 새로운 User 객체 생성(나중에 개선해야함!!)
+        // 3. 사용자 정보 수정(실제로는 User 엔티티에 Update 메서드 추가 필요(현재는 새로운 User 객체 생성(나중에 개선해야함!!)
 
         // 4. 수정된 정보 저장 및 리턴
         User updatedUser = userRepository.save(user);
