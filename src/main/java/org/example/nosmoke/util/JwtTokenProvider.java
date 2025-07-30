@@ -29,6 +29,7 @@ public class JwtTokenProvider {
 
     // UserDetailsService 주입 --> UserDetails? SpringSecurity 에서 사용자의 정보를 담는 인터페이스
     // 사용자 정보 불러오기 위해 구현해야하는 인터페이스
+    // 이 UserDetailService에 Spring이 내가 작성한 CustomUsreDetailService 주입해줌
     private final UserDetailsService userDetailsService;
 
     @PostConstruct
