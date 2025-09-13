@@ -20,11 +20,17 @@ public class CutsomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        // 여기서 username은 이메일
-        return userRepository.findByEmail(username)
-                .map(this::createUserDetails)
-                .orElseThrow(() -> new UsernameNotFoundException(username + " -> 데이터베이스에서 찾을 수 없습니다."));
 
+        // userId로 조회
+        try {
+            long userId = Long.parseLong(username);
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new UsernameNotFoundException("찾을 수 없는 UserId 입니다 ID : " + userId));
+
+            return createUserDetails(user);
+        } catch (NumberFormatException e) {
+            throw new UsernameNotFoundException("유효하지 않은 사용자 ID 형식입니다. " + username + " : " + e.getMessage());
+        }
     }
 
     // DB에 User 값 존재한다면 UserDetails 객체로 만들어 리턴
