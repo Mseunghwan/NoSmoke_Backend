@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @Entity
+
 @Table(name="smoking_info")
 public class SmokingInfo extends BaseEntity{
     @Id
@@ -42,7 +43,10 @@ public class SmokingInfo extends BaseEntity{
     }
 
     // Setter 굳이 안쓰는 이유? 무분별한 수정 허용을 피하고 비즈니스 로직 부재로 인해
-    public void updateQuitGoal(String quitGoal) {
+    public void updateInfo(String cigaretteType, int dailyConsumption, LocalDateTime targetDate, String quitGoal) {
+        this.cigaretteType = cigaretteType;
+        this.dailyConsumption = dailyConsumption;
+        this.targetDate = targetDate;
         this.quitGoal = quitGoal;
     }
 }
