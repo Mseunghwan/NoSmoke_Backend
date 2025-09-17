@@ -2,6 +2,7 @@ package org.example.nosmoke.dto.quitsurvey;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.example.nosmoke.entity.QuitSurvey;
 
 import java.time.LocalDateTime;
 
@@ -19,5 +20,17 @@ public class QuitSurveyResponseDto {
     private final LocalDateTime modifiedAt;
 
     // 추가 정보
-    private final int pointsEarned;  // 이번 설문으로 얻은 포인트
+    private int pointsEarned;  // 이번 설문으로 얻은 포인트
+
+    public QuitSurveyResponseDto(QuitSurvey quitSurvey) {
+        this.id = quitSurvey.getId();
+        this.userId = quitSurvey.getUserId();
+        this.isSuccess = quitSurvey.isSuccess();
+        this.stressLevel = quitSurvey.getStressLevel();
+        this.stressCause = quitSurvey.getStressCause();
+        this.cravingLevel = quitSurvey.getCravingLevel();
+        this.additionalNotes = quitSurvey.getAdditionalNotes();
+        this.createdAt = quitSurvey.getCreatedAt();
+        this.modifiedAt = quitSurvey.getModifiedAt();
+    }
 }
