@@ -3,8 +3,10 @@ package org.example.nosmoke.service.quitsurvey;
 import lombok.RequiredArgsConstructor;
 import org.example.nosmoke.dto.quitsurvey.QuitSurveyRequestDto;
 import org.example.nosmoke.entity.QuitSurvey;
+import org.example.nosmoke.repository.MonkeyMessageRepository;
 import org.example.nosmoke.repository.QuitSurveyRepository;
 import org.example.nosmoke.repository.UserRepository;
+import org.example.nosmoke.service.monkey.MonkeyDialogueService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,7 @@ import java.util.List;
 public class QuitSurveyService {
     private final QuitSurveyRepository quitSurveyRepository;
     private final UserRepository userRepository;
+    private final MonkeyDialogueService monkeyDialogueService;
 
 //    일일 금연 설문 저장 메서드
     @Transactional
@@ -33,7 +36,13 @@ public class QuitSurveyService {
                 requestDto.getAdditionalNotes()
         );
 
-        return quitSurveyRepository.save(quitSurvey);
+
+        QuitSurvey savedSurvey = quitSurveyRepository.save(quitSurvey);
+
+        monkeyDialogueService.generateAndSaveReactiveMessage(userId, savedSurvey);
+
+        return savedSurvey;
+
     }
 
     // 특정 사용자 설문 기록 조회
