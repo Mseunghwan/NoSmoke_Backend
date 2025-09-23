@@ -43,8 +43,13 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    // swagger
+    // Swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+
+    // Langchain4j
+    implementation 'dev.langchain4j:langchain4j:0.33.0'
+    implementation 'dev.langchain4j:langchain4j-vertex-ai-gemini:0.33.0'
+
 }
 
 tasks.named('test') {
