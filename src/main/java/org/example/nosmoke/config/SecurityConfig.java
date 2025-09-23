@@ -40,7 +40,15 @@ public class SecurityConfig {
 
                 // 4. 요청별 인가 규칙 설정 --> requestMatchers 경로 외 다른 경로(프로필 조회 등등)는 인증을 거쳐야만 접근할 수 있다고 설정
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/signup","/api/auth/login", "/api/auth/check-email").permitAll()
+                        .requestMatchers(
+                                "/api/auth/signup",
+                                "/api/auth/login",
+                                "/api/auth/check-email",
+                                // Swagger UI
+                                "/swagger-resources/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**"
+                        ).permitAll()
                         .anyRequest().authenticated() // 위 3개 주소 외 인증(유효한 JWT를 가진 상태, 즉 로그인 상태)을 거쳐야만 접근 허용하겠다는 규칙 적용
                 )
 
