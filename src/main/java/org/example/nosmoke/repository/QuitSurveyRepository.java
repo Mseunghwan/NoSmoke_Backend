@@ -8,4 +8,6 @@ import java.util.List;
 @Repository
 public interface QuitSurveyRepository extends JpaRepository<QuitSurvey, Long> {
     List<QuitSurvey> findByUserId(Long userId);
+
+    List<QuitSurvey> findTop5ByUserIdOrderByCreatedAtDesc(Long userId);
 }
