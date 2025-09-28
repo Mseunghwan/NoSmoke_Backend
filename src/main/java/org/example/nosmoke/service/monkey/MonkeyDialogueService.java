@@ -1,4 +1,5 @@
 package org.example.nosmoke.service.monkey;
+// 사용자 행동(설문, 대화) 토대로 반응하는 스털링 Service
 
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +8,7 @@ import org.example.nosmoke.entity.QuitSurvey;
 import org.example.nosmoke.entity.SmokingInfo;
 import org.example.nosmoke.entity.User;
 import org.example.nosmoke.repository.MonkeyMessageRepository;
+import org.example.nosmoke.repository.QuitSurveyRepository;
 import org.example.nosmoke.repository.SmokingInfoRepository;
 import org.example.nosmoke.repository.UserRepository;
 import org.example.nosmoke.service.user.UserService;
@@ -24,6 +26,7 @@ public class MonkeyDialogueService {
     private final SmokingInfoRepository smokingInfoRepository;
 
     private final ChatLanguageModel chatLanguageModel;
+    private final QuitSurveyRepository quitSurveyRepository;
 
     // QuitSurveyService에서 설문 DB에 저장한 신호를 보내면 해당 service 호출,
     // QuitSurveyService가 MonkeyDialogueService 알도록 의존성 주입해주어야
@@ -52,6 +55,24 @@ public class MonkeyDialogueService {
 
     }
 
+    @Transactional
+    public void generateAndSaveProactiveMessage(User user) {
+        SmokingInfo smokingInfo = smokingInfoRepository.findByUserId(user.getId()).orElse(null);
+
+        // 최근 5개의 설문기록 조회
+        List<QuitSurvey> recentSurveys = quitSurveyRepository.findTop5ByUserIdOrderByCreatedAtDesc(user.getId());
+
+        String prompt = createProactivePrompt(user, smokingInfo, recentSurveys);
+        String answer = chatLanguageModel.generate(prompt);
+
+        MonkeyMessage message = MonkeyMessage.builder()
+                .user(user)
+                .content(answer)
+                .messageType(MonkeyMessage.MessageType.PROACTIVE)
+                .build();
+        monkeyMessageRepository.save(message);
+    }
+
     public List<MonkeyMessage> findMessagesByUserId(Long userId) {
         return monkeyMessageRepository.findByUser_IdOrderByCreatedAtDesc(userId);
     }
@@ -70,6 +91,30 @@ public class MonkeyDialogueService {
                         "- 스트레스 원인: %s\n" +
                         "- 오늘의 흡연 충동 지수 (1-10): %d",
                 quitGoal, successStatus, latestSurvey.getStressLevel(), latestSurvey.getStressCause(), latestSurvey.getCravingLevel()
+        );
+    }
+
+    public String createProactivePrompt(User user, SmokingInfo smokingInfo, List<QuitSurvey> recentSurveys) {
+        // 금연 일수 세기
+        long quitDays = (smokingInfo != null && smokingInfo.getQuitStartDate() != null)
+                ? java.time.Duration.between(smokingInfo.getQuitStartDate(), java.time.LocalDateTime.now()).toDays()
+                : 0;
+
+        String quitGoal = (smokingInfo != null) ? smokingInfo.getQuitGoal() : "";
+
+        // 최근 설문 데이터 분석
+        long successCount = recentSurveys.stream().filter(QuitSurvey::isSuccess).count();
+        String recentTrend = "최근 금연 성공률은 " + (recentSurveys.isEmpty() ? 0 : (successCount * 100 / recentSurveys.size())) + "%에요.";
+
+        return String.format(
+                "너는 사용자의 금연을 돕는 귀여운 원숭이 캐릭터 '스털링'이야. 항상 사용자를 '주인님'이라고 부르고, 말 끝에 '끼끼!'나 '끽!'을 붙여야 해. " +
+                        "오늘은 주인님이 아무런 행동을 하지 않았지만, 네가 먼저 응원의 메시지를 보내는 상황이야. 아래 정보를 바탕으로 주인님을 격려하고, 금연 의지를 다질 수 있는 메시지를 한두 문장으로 만들어줘.\n\n" +
+                        "- 주인님 닉네임: %s\n" +
+                        "- 주인님의 금연 목표: %s\n" +
+                        "- 금연 시작한 지: %d일째\n" +
+                        "- 최근 금연 기록 분석: %s\n\n" +
+                        "위 정보를 활용해서, 오늘 하루도 잘 해낼 수 있도록 힘을 불어넣어 줘!",
+                user.getName(), quitGoal, quitDays, recentTrend
         );
     }
 
