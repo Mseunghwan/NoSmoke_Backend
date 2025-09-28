@@ -7,6 +7,7 @@ import org.example.nosmoke.repository.MonkeyMessageRepository;
 import org.example.nosmoke.repository.QuitSurveyRepository;
 import org.example.nosmoke.repository.UserRepository;
 import org.example.nosmoke.service.monkey.MonkeyDialogueService;
+import org.example.nosmoke.service.user.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ public class QuitSurveyService {
     private final QuitSurveyRepository quitSurveyRepository;
     private final UserRepository userRepository;
     private final MonkeyDialogueService monkeyDialogueService;
+    private final UserService userService;
 
 //    일일 금연 설문 저장 메서드
     @Transactional
@@ -36,8 +38,13 @@ public class QuitSurveyService {
                 requestDto.getAdditionalNotes()
         );
 
-
         QuitSurvey savedSurvey = quitSurveyRepository.save(quitSurvey);
+
+        // 금연 성공 시 포인트 지급
+        if (savedSurvey.isSuccess()) {
+            final int POINTS_FOR_SUCCESS = 10; // 성공시 10 포인트
+            userService.addPoints(userId, POINTS_FOR_SUCCESS);
+        }
 
         monkeyDialogueService.generateAndSaveReactiveMessage(userId, savedSurvey);
 

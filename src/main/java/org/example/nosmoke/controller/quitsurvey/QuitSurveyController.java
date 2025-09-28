@@ -34,6 +34,12 @@ public class QuitSurveyController {
             QuitSurvey savedSurvey = quitSurveyService.saveSurvey(Long.parseLong(userId), requestDto);
             QuitSurveyResponseDto responseDto = new QuitSurveyResponseDto(savedSurvey);
 
+            // 우선 획득 포인트 여기서 정해주기
+            if (savedSurvey.isSuccess()) {
+                final int POINTS_FOR_SUCCESS = 10;
+                responseDto.setPointsEarned(POINTS_FOR_SUCCESS);
+            }
+
             ApiResponse<QuitSurveyResponseDto> response = ApiResponse.success(
                     "일일 흡연 설문이 등록되었습니다.",
                     responseDto

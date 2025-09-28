@@ -119,6 +119,15 @@ public class UserService {
 
     }
 
+    // 포인트 누적
+    @Transactional
+    public void addPoints(Long userId, int points){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        int newPoints = user.getPoint() + points;
+        user.updatePoint(newPoints);
+    }
 
     // 포인트 수정
     @Transactional
