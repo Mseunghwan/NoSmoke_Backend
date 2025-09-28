@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class QuitSurveyRequestDto {
     @NotNull(message = "금연 성공 여부는 필수입니다.")
-    private final boolean isSuccess;
+    private final boolean success;
 
     @NotNull(message = "스트레스 수준은 필수입니다.")
     @Min(value = 1, message = "스트레스 수준은 1 이상이어야 합니다.")
