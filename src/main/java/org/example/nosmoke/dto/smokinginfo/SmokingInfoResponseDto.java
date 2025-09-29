@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.example.nosmoke.entity.SmokingInfo;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -13,8 +14,8 @@ public class SmokingInfoResponseDto {
     private final Long userId;
     private final String cigaretteType;
     private final int dailyConsumption;
-    private final LocalDateTime quitStartDate;
-    private final LocalDateTime targetDate;
+    private final LocalDate quitStartDate;
+    private final LocalDate targetDate;
     private final String quitGoal;
     private final LocalDateTime createdAt;
     private final LocalDateTime modifiedAt;

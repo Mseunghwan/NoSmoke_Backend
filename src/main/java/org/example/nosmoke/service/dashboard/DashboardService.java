@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,8 +41,8 @@ public class DashboardService {
         long quitDays = 0;
         long cigarettesNotSmoked = 0;
         if (smokingInfo != null && smokingInfo.getQuitStartDate() != null) {
-            // 오늘 일자 까지의 D-day 세는 Duration.between
-            quitDays = Duration.between(smokingInfo.getQuitStartDate(), LocalDate.now()).toDays();
+            // 오늘 일자 까지의 LocalDate 날짜 수 센다
+            quitDays = ChronoUnit.DAYS.between(smokingInfo.getQuitStartDate(), LocalDate.now());
             cigarettesNotSmoked = quitDays * smokingInfo.getDailyConsumption();
         }
 
