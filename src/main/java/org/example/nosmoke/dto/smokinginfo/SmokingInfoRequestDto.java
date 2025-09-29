@@ -4,7 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @RequiredArgsConstructor
@@ -19,10 +19,10 @@ public class SmokingInfoRequestDto {
     private final int dailyConsumption;
 
     @NotNull(message = "금연 시작일은 필수입니다.")
-    private final LocalDateTime quitStartTime;
+    private final LocalDate quitStartTime;
 
     @NotNull(message = "목표 날짜는 필수입니다.")
-    private final LocalDateTime targetDate;
+    private final LocalDate targetDate;
 
     @NotBlank(message = "금연 목표는 필수입니다.")
     @Size(max = 255, message = "금연 목표는 255자 이내여야 합니다.")

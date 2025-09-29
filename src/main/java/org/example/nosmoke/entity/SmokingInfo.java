@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -27,13 +28,13 @@ public class SmokingInfo extends BaseEntity{
     public int dailyConsumption;
 
     @Column(name="quit_start_date")
-    public LocalDateTime quitStartDate;
+    public LocalDate quitStartDate;
     @Column(name="target_date")
-    public LocalDateTime targetDate;
+    public LocalDate targetDate;
     @Column(name="quitGoal")
     public String quitGoal;
 
-    public SmokingInfo(Long userId, String cigaretteType, Integer dailyConsumption, LocalDateTime quitStartDate, LocalDateTime targetDate, String quitGoal) {
+    public SmokingInfo(Long userId, String cigaretteType, Integer dailyConsumption, LocalDate quitStartDate, LocalDate targetDate, String quitGoal) {
         this.userId = userId;
         this.cigaretteType = cigaretteType;
         this.dailyConsumption = dailyConsumption;
@@ -43,7 +44,7 @@ public class SmokingInfo extends BaseEntity{
     }
 
     // Setter 굳이 안쓰는 이유? 무분별한 수정 허용을 피하고 비즈니스 로직 부재로 인해
-    public void updateInfo(String cigaretteType, int dailyConsumption, LocalDateTime targetDate, String quitGoal) {
+    public void updateInfo(String cigaretteType, int dailyConsumption, LocalDate targetDate, String quitGoal) {
         this.cigaretteType = cigaretteType;
         this.dailyConsumption = dailyConsumption;
         this.targetDate = targetDate;
