@@ -1,6 +1,5 @@
 package org.example.nosmoke.controller.user;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.nosmoke.dto.ApiResponse;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*") // Cors 설정으로, 모든 출처에서 오는 요청을 허용한다는 의미
 public class UserController {
 
     private final UserService userService;
