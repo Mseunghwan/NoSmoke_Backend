@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +72,14 @@ public class DashboardService {
             longestStreak = currentStreak;
         }
 
-        // 건강 개선 효과
+        // 오늘 설문 했는지 확인하는 로직 --> UI 업데이트 위함
+        LocalDateTime todayStart = LocalDate.now().atStartOfDay(); // 오늘 시작 : 00:00:00
+        LocalDateTime todayEnd = LocalDate.now().atTime(LocalTime.MAX); // 오늘 끝 : 23:59:59
+
+        boolean hasSurveyedToday = surveys.stream()
+                .anyMatch(s -> s.getCreatedAt().isAfter(todayStart) && s.getCreatedAt().isBefore(todayEnd));
+
+        // 건강 개선 효과 - 미완
         List<String> healthImprovements = calculateHealthImprovements(quitDays);
 
         return DashboardResponseDto.builder()
@@ -80,6 +89,7 @@ public class DashboardService {
                 .currentStreak(currentStreak)
                 .longestStreak(longestStreak)
                 .points(user.getPoint())
+                .hasSurveyedToday(hasSurveyedToday)
                 .build();
     }
 

@@ -5,6 +5,7 @@ import org.example.nosmoke.util.JwtAuthenticationFilter;
 import org.example.nosmoke.util.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -49,6 +50,8 @@ public class SecurityConfig {
 
                 // 4. 요청별 인가 규칙 설정 --> requestMatchers 경로 외 다른 경로(프로필 조회 등등)는 인증을 거쳐야만 접근할 수 있다고 설정
                 .authorizeHttpRequests(auth -> auth
+                        // flutter 대시보드 정보 요청 시 Options 요청 보내기에 Security 에서 예외처리
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
                                 "/api/auth/signup",
                                 "/api/auth/login",

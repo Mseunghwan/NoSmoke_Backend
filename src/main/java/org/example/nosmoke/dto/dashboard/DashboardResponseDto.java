@@ -15,6 +15,5 @@ public class DashboardResponseDto {
     private final int currentStreak; // 현재 연속 성공일
     private final int longestStreak; // 최장 연속 성공일
     private final int points; // 보유 포인트
-
-
+    private final boolean hasSurveyedToday; // 오늘 설문 완료 여부
 }
