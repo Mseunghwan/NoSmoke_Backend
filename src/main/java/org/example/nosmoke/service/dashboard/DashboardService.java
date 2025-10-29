@@ -47,9 +47,15 @@ public class DashboardService {
             quitDays = ChronoUnit.DAYS.between(smokingInfo.getQuitStartDate(), LocalDate.now());
             cigarettesNotSmoked = quitDays * smokingInfo.getDailyConsumption();
         }
+        System.out.println("=====================================");
+        System.out.println(">>> [DEBUG] 참은 담배 개수: " + cigarettesNotSmoked);
+        System.out.println(">>> [DEBUG] 한 갑당 가격: " + PRICE_PER_PACK);
+        System.out.println(">>> [DEBUG] 한 갑당 개비 수: " + CIGARETTES_PER_PACK);
 
         // 절약금액 계산
-        long savedMoney = (cigarettesNotSmoked / CIGARETTES_PER_PACK) * PRICE_PER_PACK;
+        long savedMoney = (cigarettesNotSmoked * PRICE_PER_PACK) / CIGARETTES_PER_PACK;
+        System.out.println(">>> [DEBUG] 계산된 절약 금액: " + savedMoney);
+        System.out.println("=====================================");
 
         // 연속 성공일자 계산
         int currentStreak = 0;
@@ -85,7 +91,7 @@ public class DashboardService {
         return DashboardResponseDto.builder()
                 .quitDays(quitDays)
                 .savedMoney(savedMoney)
-                .cigaretteNotSmoked(cigarettesNotSmoked)
+                .cigarettesNotSmoked(cigarettesNotSmoked)
                 .currentStreak(currentStreak)
                 .longestStreak(longestStreak)
                 .points(user.getPoint())
