@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,9 +47,15 @@ public class DashboardService {
             quitDays = ChronoUnit.DAYS.between(smokingInfo.getQuitStartDate(), LocalDate.now());
             cigarettesNotSmoked = quitDays * smokingInfo.getDailyConsumption();
         }
+        System.out.println("=====================================");
+        System.out.println(">>> [DEBUG] 참은 담배 개수: " + cigarettesNotSmoked);
+        System.out.println(">>> [DEBUG] 한 갑당 가격: " + PRICE_PER_PACK);
+        System.out.println(">>> [DEBUG] 한 갑당 개비 수: " + CIGARETTES_PER_PACK);
 
         // 절약금액 계산
-        long savedMoney = (cigarettesNotSmoked / CIGARETTES_PER_PACK) * PRICE_PER_PACK;
+        long savedMoney = (cigarettesNotSmoked * PRICE_PER_PACK) / CIGARETTES_PER_PACK;
+        System.out.println(">>> [DEBUG] 계산된 절약 금액: " + savedMoney);
+        System.out.println("=====================================");
 
         // 연속 성공일자 계산
         int currentStreak = 0;
@@ -70,16 +78,24 @@ public class DashboardService {
             longestStreak = currentStreak;
         }
 
-        // 건강 개선 효과
+        // 오늘 설문 했는지 확인하는 로직 --> UI 업데이트 위함
+        LocalDateTime todayStart = LocalDate.now().atStartOfDay(); // 오늘 시작 : 00:00:00
+        LocalDateTime todayEnd = LocalDate.now().atTime(LocalTime.MAX); // 오늘 끝 : 23:59:59
+
+        boolean hasSurveyedToday = surveys.stream()
+                .anyMatch(s -> s.getCreatedAt().isAfter(todayStart) && s.getCreatedAt().isBefore(todayEnd));
+
+        // 건강 개선 효과 - 미완
         List<String> healthImprovements = calculateHealthImprovements(quitDays);
 
         return DashboardResponseDto.builder()
                 .quitDays(quitDays)
                 .savedMoney(savedMoney)
-                .cigaretteNotSmoked(cigarettesNotSmoked)
+                .cigarettesNotSmoked(cigarettesNotSmoked)
                 .currentStreak(currentStreak)
                 .longestStreak(longestStreak)
                 .points(user.getPoint())
+                .hasSurveyedToday(hasSurveyedToday)
                 .build();
     }
 
