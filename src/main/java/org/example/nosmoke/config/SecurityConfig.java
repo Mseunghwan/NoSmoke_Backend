@@ -40,7 +40,6 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 // 1.1 전역 Cors 설정
                 .cors(Customizer.withDefaults())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 2. 세션 관리 정책 설정 --> Stateless
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
